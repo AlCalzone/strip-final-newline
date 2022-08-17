@@ -36,3 +36,13 @@ jobs:
       run: node --input-type="module" -e 'import foo from "strip-final-newline"'
     - name: Test that require works
       run: node --input-type="commonjs" -e 'require("strip-final-newline")'
+
+    - name: Push changes to repo
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        git config --global user.name "Repo Bot"
+        git config --global user.email "d.griesel@gmx.net"
+
+        git add -A -- :(exclude).github/* :(exclude)readme.md
+        git commit -m "update repository with upstream changes"
+        git push
