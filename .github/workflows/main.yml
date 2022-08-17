@@ -22,7 +22,8 @@ jobs:
 
     - name: Restore some of our files
       run: |
-        git checkout origin/main -- .github/ readme.md
+        rm -rf .github/ readme.md
+        git checkout $GITHUB_REF -- .github/ readme.md
 
     - name: Convert to CommonJS/ESM Hybrid
       run: bash .github/make_hybrid.sh
