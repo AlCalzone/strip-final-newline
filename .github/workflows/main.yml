@@ -11,13 +11,12 @@ jobs:
         node-version: [16.x] # This should be LTS
 
     steps:
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-
     # Check out the upstream package first
     - name: Debug
       run: |
         git remote -vv
+
+    # - name: Use Node.js ${{ matrix.node-version }}
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: ${{ matrix.node-version }}
