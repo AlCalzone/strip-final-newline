@@ -18,8 +18,10 @@ PJSON=$(cat package.json | jq --tab '
 	| .repository = "esm2cjs/" + .name
 	| .funding = "https://github.com/sponsors/AlCalzone"
 	| .name |= "@esm2cjs/" + .
+	| .scripts["to-cjs"] = "esm2cjs --in esm --out cjs -t node12"
 	'
 )
 echo "$PJSON" > package.json
 
-npx @alcalzone/esm2cjs --in esm --out cjs -t node12
+npm i -D @alcalzone/esm2cjs
+npm run to-cjs
