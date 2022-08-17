@@ -11,7 +11,9 @@ jobs:
         node-version: [16.x] # This should be LTS
 
     steps:
-    # Check out the upstream package first
+    - name: Checkout code
+      uses: actions/checkout@v3
+
     - name: Debug
       run: |
         git remote -vv
