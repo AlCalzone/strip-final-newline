@@ -1,22 +1,56 @@
-name: CI
+name: Patch upstream package
 on:
+  - workflow_dispatch
   - push
-  - pull_request
+
 jobs:
-  test:
-    name: Node.js ${{ matrix.node-version }}
+  patch:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
-        node-version:
-          - 16
-          - 14
-          - 12
+        node-version: [16.x] # This should be LTS
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm install
-      - run: npm test
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Prepare repository
+      run: |
+        # Remember where we are at
+        CURRENT_BRANCH_AND_REMOTE=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))
+
+        # Checkout upstream repo without switching branches
+        git remote add upstream https://github.com/sindresorhus/strip-final-newline.git
+        git fetch upstream
+        git checkout upstream/main -- .
+        git reset
+
+        # Restore some of our files
+        rm -rf .github/ readme.md
+        git checkout $CURRENT_BRANCH_AND_REMOTE -- .github/ readme.md
+        ls -la
+
+    - name: Convert to CommonJS/ESM Hybrid
+      run: bash .github/make_hybrid.sh
+
+    - name: Test that ESM import works
+      run: node --input-type="module" -e 'import foo from "strip-final-newline"'
+    - name: Test that require works
+      run: node --input-type="commonjs" -e 'require("strip-final-newline")'
+
+    - name: Debug stuff
+      run: |
+        git remote -v
+        git branch -vv
+        git status
+        git diff
+
+    - name: Push changes to repo
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        git config --global user.name "Repo Bot"
+        git config --global user.email "d.griesel@gmx.net"
+
+        git add -A -- ':!.github/*' ':!readme.md'
+        git commit -m "update repository with upstream changes"
+        git push
