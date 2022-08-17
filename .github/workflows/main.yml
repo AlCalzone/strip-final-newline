@@ -14,16 +14,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Switch to upstream repo
+    - name: Prepare repository
       run: |
+        # Remember where we are at
+        CURRENT_BRANCH_AND_REMOTE=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))
+
+        # Checkout upstream repo
         git remote add upstream https://github.com/sindresorhus/strip-final-newline.git
         git fetch upstream
         git reset --hard upstream/main
 
-    - name: Restore some of our files
-      run: |
+        # Restore some of our files
         rm -rf .github/ readme.md
-        git checkout $GITHUB_REF -- .github/ readme.md
+        git checkout $CURRENT_BRANCH_AND_REMOTE -- .github/ readme.md
         ls -la
 
     - name: Convert to CommonJS/ESM Hybrid
