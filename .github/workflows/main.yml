@@ -24,6 +24,7 @@ jobs:
       run: |
         rm -rf .github/ readme.md
         git checkout $GITHUB_REF -- .github/ readme.md
+        ls -la
 
     - name: Convert to CommonJS/ESM Hybrid
       run: bash .github/make_hybrid.sh
