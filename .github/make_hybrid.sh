@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir -p cjs
+mkdir -p esm cjs
 mv index.js esm/index.js
 sed -i 's#./index.js#./esm/index.js#' test.js
 mv test.js test.mjs

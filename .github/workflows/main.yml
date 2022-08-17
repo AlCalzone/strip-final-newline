@@ -18,7 +18,7 @@ jobs:
       run: |
         git remote add upstream https://github.com/sindresorhus/strip-final-newline.git
         git fetch upstream
-        git checkout upstream/main
+        git reset --hard upstream/main
 
     - name: Restore some of our files
       run: |
