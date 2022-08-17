@@ -1,7 +1,6 @@
 name: Patch upstream package
 on:
   - workflow_dispatch
-  - push
 
 jobs:
   patch:
