@@ -14,11 +14,20 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Debug
+    - name: Switch to upstream repo
       run: |
-        git remote -vv
+        git remote add upstream https://github.com/sindresorhus/strip-final-newline.git
+        git fetch upstream
+        git checkout upstream/main
 
-    # - name: Use Node.js ${{ matrix.node-version }}
-    #   uses: actions/setup-node@v3
-    #   with:
-    #     node-version: ${{ matrix.node-version }}
+    - name: Restore some of our files
+      run: |
+        git checkout origin/main -- .github/ readme.md
+
+    - name: Convert to CommonJS/ESM Hybrid
+      run: bash .github/make_hybrid.sh
+
+    - name: Test that ESM import works
+      run: node --input-type="module" -e 'import foo from "strip-final-newline"'
+    - name: Test that require works
+      run: node --input-type="commonjs" -e 'require("strip-final-newline")'
