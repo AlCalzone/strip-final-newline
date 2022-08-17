@@ -1,22 +1,23 @@
-name: CI
+name: Patch upstream package
 on:
+  - workflow_dispatch
   - push
-  - pull_request
+
 jobs:
-  test:
-    name: Node.js ${{ matrix.node-version }}
+  patch:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
-        node-version:
-          - 16
-          - 14
-          - 12
+        node-version: [16.x] # This should be LTS
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm install
-      - run: npm test
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    # Check out the upstream package first
+    - name: Debug
+      run: |
+        git remote -vv
