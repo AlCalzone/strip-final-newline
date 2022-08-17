@@ -1,0 +1,25 @@
+name: Check upstream for new release
+on:
+  schedule:
+    # check each night at 1 AM
+    - cron: '00 01 * * *'
+  workflow_dispatch: {}
+  push: {}
+
+jobs:
+  check-releases:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x] # This should be LTS
+
+    steps:
+    - id: check-version
+      name: Check upstream version
+      uses: pozetroninc/github-action-get-latest-release@v0.5.0
+      with:
+        repository: sindresorhus/strip-final-newline
+        excludes: prerelease, draft
+
+    - name: Debug
+      run: echo "${{ steps.check-version.outputs.release }}"

@@ -1,4 +1,4 @@
-name: Patch upstream package
+name: Sync with upstream and patch
 on:
   - workflow_dispatch
 
