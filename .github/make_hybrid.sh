@@ -22,4 +22,4 @@ PJSON=$(cat package.json | jq --tab '
 )
 echo "$PJSON" > package.json
 
-npx esm2cjs --in esm --out cjs -t node12
+npx @alcalzone/esm2cjs --in esm --out cjs -t node12
