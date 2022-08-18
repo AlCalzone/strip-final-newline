@@ -26,8 +26,8 @@ jobs:
       name: Determine upstream version
       uses: pozetroninc/github-action-get-latest-release@v0.5.0
       with:
-        repository: "${UPSTREAM_REPO}"
-        excludes: prerelease, draft
+        repository: ${{ env.UPSTREAM_REPO }}
+        excludes: prerelease,draft
 
     - name: Check if tag exists locally
       id: check-tag
