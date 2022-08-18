@@ -1,6 +1,6 @@
 {
 	"name": "@esm2cjs/strip-final-newline",
-	"version": "3.0.0",
+	"version": "3.0.1-cjs.0",
 	"description": "Strip the final newline character from a string/buffer. This is a fork of sindresorhus/strip-final-newline, but with CommonJS support.",
 	"license": "MIT",
 	"repository": "esm2cjs/strip-final-newline",

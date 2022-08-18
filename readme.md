@@ -2,19 +2,9 @@
 
 This is a fork of https://github.com/sindresorhus/strip-final-newline, but automatically patched to support ESM **and** CommonJS, unlike the original repository.
 
-## Usage
+## Install
 
-Simply replace `strip-final-newline` in your code with `@esm2cjs/strip-final-newline`
-
-```js
-// Using ESM import syntax
-import stripFinalNewline from '@esm2cjs/strip-final-newline';
-
-// Using CommonJS require()
-const stripFinalNewline = require('@esm2cjs/strip-final-newline').default;
-```
-
-Or define an npm alias:
+Use an npm alias to install this package under the original name:
 ```
 npm i strip-final-newline@npm:@esm2cjs/strip-final-newline
 ```
@@ -22,12 +12,27 @@ npm i strip-final-newline@npm:@esm2cjs/strip-final-newline
 ```jsonc
 // package.json
 "dependencies": {
-    "strip-final-newline": "npm:@esm2cjs/strip-final-newline@^3.0.0"
+    "strip-final-newline": "npm:@esm2cjs/strip-final-newline@^3.0.1-cjs.0"
 }
 ```
 
 > **Note:**
+> We strive to use the same versions as the upstream package, but there was a mistake when publishing `3.0.0`.
+> We fixed it, but had to re-publish this version as `3.0.1-cjs.0`.
+
+## Usage
+
+```js
+// Using ESM import syntax
+import stripFinalNewline from 'strip-final-newline';
+
+// Using CommonJS require()
+const stripFinalNewline = require('strip-final-newline').default;
+```
+
+> **Note:**
 > Because the original module uses `export default`, you need to append `.default` to the `require()` call.
+
 
 For more details, please see the original [repository](https://github.com/sindresorhus/strip-final-newline).
 
