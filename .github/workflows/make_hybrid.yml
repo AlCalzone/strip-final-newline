@@ -30,9 +30,6 @@ jobs:
       env:
         TAG: ${{ github.event.inputs.tag }}
       run: |
-        # Remember where we are at
-        CURRENT_BRANCH_AND_REMOTE=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))
-
         # Restore files to the state in the upstream repo, except our CI scripts and the readme
         git remote add upstream ${UPSTREAM_REPO_URL}
         git fetch upstream
@@ -43,13 +40,27 @@ jobs:
     - name: Convert to CommonJS/ESM Hybrid
       run: bash .github/make_hybrid.sh
 
-    - name: Test that ESM import works
-      run: node ${TEST_SCRIPT_ESM}
-    - name: Test that require works
-      run: node ${TEST_SCRIPT_CJS}
+    - name: Test that both import and require work
+      run: |
+        mkdir __test
+        PACK_FILENAME=$(npm pack --silent --pack-destination __test)
+        cd __test
+        npm init -y
+        npm i $PACK_FILENAME
+
+        echo "Test import"
+        node ../${TEST_SCRIPT_ESM}
+
+        echo "Test require"
+        node ../${TEST_SCRIPT_CJS}
+
+        cd ..
+        rm -rf __test
 
     - name: Remember changes for push
-      run: git diff > delta.patch
+      run: |
+        git add .
+        git diff --patch --staged > delta.patch
 
     - name: Upload changes to cache
       uses: actions/upload-artifact@v3
