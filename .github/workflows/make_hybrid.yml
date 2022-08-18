@@ -44,9 +44,9 @@ jobs:
       run: bash .github/make_hybrid.sh
 
     - name: Test that ESM import works
-      run: node --input-type="module" -e '${TEST_SCRIPT_ESM}'
+      run: node ${TEST_SCRIPT_ESM}
     - name: Test that require works
-      run: node --input-type="commonjs" -e '${TEST_SCRIPT_CJS}'
+      run: node ${TEST_SCRIPT_CJS}
 
     - name: Remember changes for push
       run: git diff > delta.patch
