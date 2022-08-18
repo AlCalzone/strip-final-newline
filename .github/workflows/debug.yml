@@ -1,0 +1,27 @@
+name: Test env action
+on:
+  - push
+
+jobs:
+  check-releases:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Load configuration
+      uses: cardinalby/export-env-action@v2
+      with:
+        envFile: '.github/config.env'
+        expand: 'true'
+
+    - run: |
+        echo "PACKAGE_NAME = $PACKAGE_NAME"
+        echo "ESM2CJS_PACKAGE_NAME = $ESM2CJS_PACKAGE_NAME"
+        echo "UPSTREAM_REPO = $UPSTREAM_REPO"
+        echo "UPSTREAM_REPO_URL = $UPSTREAM_REPO_URL"
+        echo "TEST_SCRIPT_CJS = $TEST_SCRIPT_CJS"
+        echo "TEST_SCRIPT_ESM = $TEST_SCRIPT_ESM"
+        echo "GIT_USER = $GIT_USER"
+        echo "GIT_EMAIL = $GIT_EMAIL"
