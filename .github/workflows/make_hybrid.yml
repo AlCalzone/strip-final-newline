@@ -37,7 +37,7 @@ jobs:
         git remote add upstream ${UPSTREAM_REPO_URL}
         git fetch upstream
         # The tag without suffix only exists on upstream, so we check it out directly
-        git restore $TAG -- . ':!.github' ':!readme.md'
+        git restore --source=$TAG -- . ':!.github' ':!readme.md'
         ls -la
 
     - name: Convert to CommonJS/ESM Hybrid
