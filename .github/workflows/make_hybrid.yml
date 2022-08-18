@@ -13,11 +13,16 @@ jobs:
       matrix:
         node-version: [16.x] # This should be LTS
 
+    permissions:
+      contents: read
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Prepare repository
+      env:
+        TAG: ${{ github.event.inputs.tag }}
       run: |
         # Remember where we are at
         CURRENT_BRANCH_AND_REMOTE=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))
@@ -26,7 +31,7 @@ jobs:
         git remote add upstream https://github.com/sindresorhus/strip-final-newline.git
         git fetch upstream
         # The tag without suffix only exists on upstream, so we check it out directly
-        git checkout ${{ github.event.inputs.tag }} -- .
+        git checkout $TAG -- .
         git reset
 
         # Restore some of our files
@@ -42,23 +47,46 @@ jobs:
     - name: Test that require works
       run: node --input-type="commonjs" -e 'require("strip-final-newline")'
 
-    - name: Debug stuff
-      run: |
-        git remote -v
-        git branch -vv
-        git status
-        git diff
+    - name: Remember changes for push
+      run: git diff > delta.patch
+
+    - name: Upload changes to cache
+      uses: actions/upload-artifact@v3
+      with:
+        name: delta
+        path: delta.patch
+        retention-days: 1 # We don't need this any longer than the workflow takes, but 1 day is the minimum
+
+  commit:
+    runs-on: ubuntu-latest
+    needs: [patch]
+
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Download changes from cache
+      uses: actions/download-artifact@v3
+      with:
+        name: delta
 
     - name: Push changes to repo
-      if: github.event_name == 'workflow_dispatch'
+      env:
+        TAG: ${{ github.event.inputs.tag }}
       run: |
+        git apply delta.patch
+        rm delta.patch
+
         git config --global user.name "Botty"
         git config --global user.email "d.griesel@gmx.net"
 
         git add -A -- ':!.github/*' ':!readme.md'
         git commit -m "update repository with upstream changes"
         # our tags have a suffix to distinguish them from upstream
-        git tag "${{ github.event.inputs.tag }}-cjs"
+        git tag "$TAG-cjs"
 
         git push
-        git push origin "${{ github.event.inputs.tag }}-cjs"
+        git push origin "$TAG-cjs"
