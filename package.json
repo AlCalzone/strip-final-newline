@@ -23,7 +23,8 @@
 		"test": "xo && ava"
 	},
 	"files": [
-		"index.js"
+		"cjs/",
+		"esm/"
 	],
 	"keywords": [
 		"strip",
