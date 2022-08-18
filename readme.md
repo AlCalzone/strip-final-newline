@@ -6,10 +6,10 @@ This is a fork of https://github.com/sindresorhus/strip-final-newline, but autom
 
 ```js
 // Using ESM import syntax
-import stripFinalNewline from 'strip-final-newline';
+import stripFinalNewline from '@esm2cjs/strip-final-newline';
 
 // Using CommonJS require()
-const stripFinalNewline = require('strip-final-newline').default;
+const stripFinalNewline = require('@esm2cjs/strip-final-newline').default;
 ```
 
 > **Note:**
