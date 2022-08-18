@@ -20,6 +20,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Load configuration
+      uses: cardinalby/export-env-action@v2
+      with:
+        envFile: '.github/config.env'
+        expand: 'true'
+
     - name: Prepare repository
       env:
         TAG: ${{ github.event.inputs.tag }}
@@ -28,7 +34,7 @@ jobs:
         CURRENT_BRANCH_AND_REMOTE=$(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))
 
         # Checkout upstream repo without switching branches
-        git remote add upstream https://github.com/sindresorhus/strip-final-newline.git
+        git remote add upstream ${UPSTREAM_REPO_URL}
         git fetch upstream
         # The tag without suffix only exists on upstream, so we check it out directly
         git checkout $TAG -- .
@@ -43,9 +49,9 @@ jobs:
       run: bash .github/make_hybrid.sh
 
     - name: Test that ESM import works
-      run: node --input-type="module" -e 'import foo from "strip-final-newline"'
+      run: node --input-type="module" -e '${TEST_SCRIPT_ESM}'
     - name: Test that require works
-      run: node --input-type="commonjs" -e 'require("strip-final-newline")'
+      run: node --input-type="commonjs" -e '${TEST_SCRIPT_CJS}'
 
     - name: Remember changes for push
       run: git diff > delta.patch
@@ -68,6 +74,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Load configuration
+      uses: cardinalby/export-env-action@v2
+      with:
+        envFile: '.github/config.env'
+        expand: 'true'
+
     - name: Download changes from cache
       uses: actions/download-artifact@v3
       with:
@@ -80,8 +92,8 @@ jobs:
         git apply delta.patch
         rm delta.patch
 
-        git config --global user.name "Botty"
-        git config --global user.email "d.griesel@gmx.net"
+        git config --global user.name "${GIT_USER}"
+        git config --global user.email "${GIT_EMAIL}"
 
         git add -A -- ':!.github/*' ':!readme.md'
         git commit -m "update repository with upstream changes"
