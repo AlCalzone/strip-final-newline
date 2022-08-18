@@ -12,6 +12,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+
     - name: Fetch existing tags
       run: git fetch --tags origin
 
@@ -22,8 +23,8 @@ jobs:
         repository: sindresorhus/strip-final-newline
         excludes: prerelease, draft
 
-    - id: check-tag
-      name: Check if tag exists locally
+    - name: Check if tag exists locally
+      id: check-tag
       run: |
         RELEASE=${{ steps.check-version.outputs.release }}
         echo "Latest release is: ${RELEASE}"
@@ -35,10 +36,20 @@ jobs:
           echo "::set-output name=tag::${RELEASE}"
         fi
 
-    - name: Trigger build
+    - name: Trigger build and wait
+      id: build
       if: steps.check-tag.outputs.tag
-      uses: benc-uk/workflow-dispatch@v1
+      uses: aurelien-baudet/workflow-dispatch@v2
       with:
         workflow: Sync with upstream and patch
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        inputs: '{"tag":"${{steps.check-tag.outputs.tag}}"}'
+        wait-for-completion: true
+
+    - name: Publish new version
+      if: steps.check-tag.outputs.tag && steps.build.outputs.workflow-conclusion == 'success'
+      uses: aurelien-baudet/workflow-dispatch@v2
+      with:
+        workflow: Publish
         token: ${{ secrets.REPO_ACCESS_TOKEN }}
         inputs: '{"tag":"${{steps.check-tag.outputs.tag}}"}'

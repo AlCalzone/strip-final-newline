@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Which tag to build and release'
+        description: 'Which tag to build'
         required: true
 
 jobs:

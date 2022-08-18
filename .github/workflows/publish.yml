@@ -1,11 +1,11 @@
 name: Publish
 
-# Publish a new version when a tag is pushed
 on:
-  push:
-    tags:
-      # Only when tagged with our suffix -cjs
-      - "v[0-9]+.[0-9]+.[0-9]+-cjs"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Which tag to build'
+        required: true
 
 jobs:
   publish:
@@ -18,6 +18,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        # our tags have a suffix to distinguish them from upstream
+        ref: ${{ github.event.inputs.tag }}-cjs
 
     # Do we need this step?
     - name: Use Node.js ${{ matrix.node-version }}

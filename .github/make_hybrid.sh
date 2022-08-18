@@ -26,6 +26,7 @@ echo "$PJSON" > package.json
 
 npm i -D @alcalzone/esm2cjs
 npm run to-cjs
+npm uninstall -D @alcalzone/esm2cjs
 
 PJSON=$(cat package.json | jq --tab 'del(.scripts["to-cjs"])')
 echo "$PJSON" > package.json
