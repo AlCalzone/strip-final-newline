@@ -4,12 +4,26 @@ This is a fork of https://github.com/sindresorhus/strip-final-newline, but autom
 
 ## Usage
 
+Simply replace `strip-final-newline` in your code with `@esm2cjs/strip-final-newline`
+
 ```js
 // Using ESM import syntax
 import stripFinalNewline from '@esm2cjs/strip-final-newline';
 
 // Using CommonJS require()
 const stripFinalNewline = require('@esm2cjs/strip-final-newline').default;
+```
+
+Or define an npm alias:
+```
+npm i strip-final-newline@npm:@esm2cjs/strip-final-newline
+```
+
+```jsonc
+// package.json
+"dependencies": {
+    "strip-final-newline": "npm:@esm2cjs/strip-final-newline@^3.0.0"
+}
 ```
 
 > **Note:**
