@@ -27,7 +27,8 @@ jobs:
       run: |
         RELEASE=${{ steps.check-version.outputs.release }}
         echo "Latest release is: ${RELEASE}"
-        if git rev-parse -q --verify "refs/tags/${RELEASE}"; then
+        # our tags have a suffix to distinguish them from upstream
+        if git rev-parse -q --verify "refs/tags/${RELEASE}-cjs"; then
           echo "Tag exists here"
         else
           echo "Tag does not exist here, triggering build..."

@@ -4,8 +4,8 @@ name: Publish
 on:
   push:
     tags:
-      # normal versions
-      - "v[0-9]+.[0-9]+.[0-9]+"
+      # Only when tagged with our suffix -cjs
+      - "v[0-9]+.[0-9]+.[0-9]+-cjs"
 
 jobs:
   publish:

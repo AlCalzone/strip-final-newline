@@ -25,7 +25,8 @@ jobs:
         # Checkout upstream repo without switching branches
         git remote add upstream https://github.com/sindresorhus/strip-final-newline.git
         git fetch upstream
-        git checkout upstream/${{ github.event.inputs.tag }} -- .
+        # The tag without suffix only exists on upstream, so we check it out directly
+        git checkout ${{ github.event.inputs.tag }} -- .
         git reset
 
         # Restore some of our files
@@ -51,11 +52,13 @@ jobs:
     - name: Push changes to repo
       if: github.event_name == 'workflow_dispatch'
       run: |
-        git config --global user.name "Repo Bot"
+        git config --global user.name "Botty"
         git config --global user.email "d.griesel@gmx.net"
 
         git add -A -- ':!.github/*' ':!readme.md'
         git commit -m "update repository with upstream changes"
-        git tag "${{ github.event.inputs.tag }}"
+        # our tags have a suffix to distinguish them from upstream
+        git tag "${{ github.event.inputs.tag }}-cjs"
+
         git push
-        git push origin "${{ github.event.inputs.tag }}"
+        git push origin "${{ github.event.inputs.tag }}-cjs"
