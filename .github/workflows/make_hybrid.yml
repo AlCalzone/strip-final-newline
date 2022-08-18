@@ -1,6 +1,10 @@
-name: Patch upstream package
+name: Sync with upstream and patch # Do not rename without updating check_releases.yml too
 on:
-  - workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Which tag to build and release'
+        required: true
 
 jobs:
   patch:
@@ -21,7 +25,7 @@ jobs:
         # Checkout upstream repo without switching branches
         git remote add upstream https://github.com/sindresorhus/strip-final-newline.git
         git fetch upstream
-        git checkout upstream/main -- .
+        git checkout upstream/${{ github.event.inputs.tag }} -- .
         git reset
 
         # Restore some of our files
@@ -52,4 +56,6 @@ jobs:
 
         git add -A -- ':!.github/*' ':!readme.md'
         git commit -m "update repository with upstream changes"
+        git tag "${{ github.event.inputs.tag }}"
         git push
+        git push origin "${{ github.event.inputs.tag }}"
