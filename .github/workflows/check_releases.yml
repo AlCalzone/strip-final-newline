@@ -4,7 +4,6 @@ on:
     # check each night at 1 AM
     - cron: '00 01 * * *'
   workflow_dispatch: {}
-  push: {}
 
 jobs:
   check-releases:
@@ -20,18 +19,29 @@ jobs:
       run: git fetch --tags origin
 
     - id: check-version
-      name: Check upstream version
+      name: Determine upstream version
       uses: pozetroninc/github-action-get-latest-release@v0.5.0
       with:
         repository: sindresorhus/strip-final-newline
         excludes: prerelease, draft
 
-    - name: Debug
+    - id: check-tag
+      name: Check if tag exists locally
       run: |
         RELEASE=${{ steps.check-version.outputs.release }}
         echo "Latest release is: ${RELEASE}"
         if git rev-parse -q --verify "refs/tags/${RELEASE}"; then
           echo "Tag exists here"
+          echo "::set-output name=tag::${RELEASE}"
         else
           echo "Tag does not exist here"
         fi
+
+    - name: Trigger build
+      if: steps.check-tag.outputs.tag
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: Sync with upstream and patch
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        event-type: release
+        client-payload: '{"tag":"${{steps.check-tag.outputs.tag}}"}'
