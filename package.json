@@ -6,9 +6,8 @@
 	"repository": "esm2cjs/strip-final-newline",
 	"funding": "https://github.com/sponsors/AlCalzone",
 	"author": {
-		"name": "Sindre Sorhus",
-		"email": "sindresorhus@gmail.com",
-		"url": "https://sindresorhus.com"
+		"name": "Dominic Griesel",
+		"email": "d.griesel@gmx.net"
 	},
 	"exports": {
 		".": {
@@ -21,8 +20,7 @@
 		"node": ">=12"
 	},
 	"scripts": {
-		"test": "xo && ava",
-		"to-cjs": "esm2cjs --in esm --out cjs -t node12"
+		"test": "xo && ava"
 	},
 	"files": [
 		"index.js"
@@ -43,9 +41,11 @@
 		"buffer"
 	],
 	"devDependencies": {
-		"@alcalzone/esm2cjs": "^1.1.2",
 		"ava": "^3.15.0",
 		"xo": "^0.39.1"
+	},
+	"publishConfig": {
+		"access": "public"
 	},
 	"main": "cjs/index.js",
 	"module": "esm/index.js",
